@@ -49,8 +49,7 @@ pnpm preview
 
 API는 별도 백엔드 서버가 필요합니다.
 
-`.env` 파일에 백엔드 서버 주소를 `VITE_API_URL`로 설정해주세요.
-`vite.config.ts`에서는 이 환경 변수를 사용해 개발 서버 프록시를 구성합니다.
+.env 파일에 백엔드 서버 주소를 VITE_API_URL로 설정해주세요. vite.config.ts에서는 이 환경 변수를 사용해 개발 서버 프록시를 구성합니다.
 
 ---
 
