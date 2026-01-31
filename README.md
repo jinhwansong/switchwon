@@ -71,7 +71,7 @@ API는 별도 백엔드 서버가 필요합니다.
 - **로그아웃**: 토큰 삭제 후 `/`로 이동
 - **지갑/환율**: 메인(`/exchange`)에서 지갑 잔액(GET `/wallets`), 환율(GET `/exchange-rates/latest`) 표시. 환율은 1분마다 재조회
 - **환전 견적**: 통화·금액 입력 시 GET `/orders/quote`로 원화 금액 조회 후 표시
-- **환전 실행**: "환전하기" 클릭 시 POST `/orders` 호출. 성공 시 지갑·환전 내역 쿼리 무효화로 자동 최신화, 입력값 초기화
+- **환전 실행**: "환전하기" 클릭 시 POST `/orders` 호출. 성공 시 지갑·환전 내역 쿼리 무효화로 자동 최신화, 입력값 초기화. EXCHANGE_RATE_MISMATCH(400) 발생 시 명세("최신 환율을 다시 조회하여 주문을 시도해야 합니다")를 "최신 환율 재조회 후 1회 자동 재시도"로 해석하여 그에 맞게 구현했습니다. 실서비스에서는 적용 환율 확인 후 사용자 재시도 방식을 고려할 수 있습니다.
 - **환전 내역**: GET `/orders`로 목록 조회 후 테이블로 표시
 
 ---
@@ -82,9 +82,9 @@ API는 별도 백엔드 서버가 필요합니다.
 - **메시지 우선순위**: `response.data.data` 내 필드 메시지(예: `forexAmount`) → `ERROR_MESSAGE_MAP[code]` → `response.data.message` → 기본 문구
 - **UNAUTHORIZED**: 토큰 삭제 후 로그인 페이지(`/`)로 리다이렉트
 - **에러 메시지 매핑**: `src/lib/errorMessageMap.ts`에 API 코드별 사용자 문구 정의 (EXCHANGE_RATE_MISMATCH, WALLET_INSUFFICIENT_BALANCE 등)
+- **EXCHANGE_RATE_MISMATCH**: 명세에 따라 최신 환율 재조회 후 1회 자동 재시도로 구현. 실서비스에서는 적용 환율 노출 후 사용자 재시도를 고려할 수 있음.
 
 - API 에러는 Axios 인터셉터에서 공통 처리하여 사용자에게 일관된 피드백을 제공합니다.
-- 전역 Error Boundary는 과제 범위를 벗어난다고 판단해 적용하지 않았습니다.
 
 ---
 

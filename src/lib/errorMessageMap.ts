@@ -4,8 +4,8 @@ export const ERROR_MESSAGE_MAP: Record<string, string> = {
   BAD_REQUEST: '입력값을 확인해주세요.',
   VALIDATION_ERROR: '요청 데이터가 올바르지 않습니다.',
   MISSING_PARAMETER: '필수 입력값이 누락되었습니다.',
-  NOT_FOUND:'요청한 URL을 찾을 수 없어요.',
-  
+  NOT_FOUND: '요청한 URL을 찾을 수 없어요.',
+
   // 인증
   UNAUTHORIZED: '로그인이 필요한 서비스입니다.',
 

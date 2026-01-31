@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import PageSection from '@/components/common/PageSection';
 import Button from '@/components/common/Button';
@@ -17,6 +18,7 @@ import {
   useOrdersQuote,
   useWallets,
 } from '@/hooks/useExchange';
+import { queryKeys } from '@/lib/queryKeys';
 import { useToastStore } from '@/store/useToastStore';
 import { useFormattedAmount } from '@/hooks/useFormattedAmount';
 import { formatCurrency, formatNumber, formatRate, parseFormattedNumber } from '@/utils/format';
@@ -38,6 +40,7 @@ export default function ExchangePage() {
     'KRW',
     debouncedAmount
   );
+  const queryClient = useQueryClient();
   const ordersCreateMutation = useOrdersCreate();
   const showToast = useToastStore((state) => state.showToast);
 
@@ -61,22 +64,46 @@ export default function ExchangePage() {
     currentRateItem?.exchangeRateId != null &&
     !ordersCreateMutation.isPending;
 
+  // EXCHANGE_RATE_MISMATCH 시 명세(최신 환율 재조회 후 주문 시도)를 1회 자동 재시도로 해석하여 구현
   const handleExchange = () => {
     const exchangeRateId = currentRateItem?.exchangeRateId;
     if (exchangeRateId == null || amount <= 0) return;
     const fromCurrency = exchangeType === 'buy' ? 'KRW' : selectedCurrency;
     const toCurrency = exchangeType === 'buy' ? selectedCurrency : 'KRW';
-    ordersCreateMutation.mutate(
-      { exchangeRateId, fromCurrency, toCurrency, forexAmount: amount },
-      {
-        onSuccess: () => {
-          showToast('환전이 완료되었습니다.', 'success');
-        },
-        onSettled: () => {
-          setDisplayValue('');
-        },
-      }
-    );
+
+    const doOrder = (id: number, isRetry = false) => {
+      ordersCreateMutation.mutate(
+        { exchangeRateId: id, fromCurrency, toCurrency, forexAmount: amount },
+        {
+          onSuccess: () => {
+            showToast('환전이 완료되었습니다.', 'success');
+          },
+          onError: (error: unknown) => {
+            if (isRetry) return;
+            const code = (error as { response?: { data?: { code?: string } } })?.response?.data?.code;
+            if (code === 'EXCHANGE_RATE_MISMATCH') {
+              queryClient
+                .refetchQueries({ queryKey: queryKeys.exchangeRate })
+                .then(() => {
+                  const data = queryClient.getQueryData<{ data?: { exchangeRateId: number; currency: string }[] }>(
+                    queryKeys.exchangeRate
+                  );
+                  const rateList = data?.data ?? [];
+                  const sorted = sortByCurrencyOrder(rateList);
+                  const rateItem = sorted.find((r) => r.currency === selectedCurrency);
+                  const newId = rateItem?.exchangeRateId;
+                  if (newId != null) doOrder(newId, true);
+                });
+            }
+          },
+          onSettled: () => {
+            setDisplayValue('');
+          },
+        }
+      );
+    };
+
+    doOrder(exchangeRateId);
   };
 
   return (
