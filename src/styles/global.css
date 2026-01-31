@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+:root {
+  --gray-800: #28323c;
+  --gray-700: #374553;
+  --gray-600: #646f7c;
+  --gray-400: #c5c8ce;
+  --gray-300: #d0d6db;
+  --blue-500: #3479eb;
+  --blue-500-hover: #2d6ad4;
+  --gray-white: #fff;
+  --buy-primary: #fe5050;
+  --buy-primary-hover: #e64545;
+  --buy-primary-text:#ffa7a7;
+  --gray-0: #f7f8f9;
+  --gray-100: #f7f8fa;
+  --cta-primary: #36414c;
+  --cta-primary-hover: #4a5664;
+  --cta2-primary-hover: #8899AA;
+  --sell-primary: #3b6eff;
+  --sell-primary-hover: #3561d4;
+  --sell-primary-text:#9d86ff;
+  --bg-main:#fff;
+}
+
+@layer base {
+  html,
+  body {
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+      sans-serif;
+    background: var(--bg-main);
+    color: var(--gray-600);
+    line-height: 1.33;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: contain;
+  }
+
+  button {
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+            color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  p {
+    margin: 0;
+    word-break: keep-all;
+    
+  }
+  input{
+    outline:none;
+  }
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--gray-white) inset;
+    box-shadow: 0 0 0 30px var(--gray-white) inset;
+    -webkit-text-fill-color: var(--gray-600);
+  }
+}
