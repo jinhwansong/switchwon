@@ -15,9 +15,9 @@ export default function HistoryPage() {
               <tr className="text-sm text-(--gray-600)">
                 <th className="px-4 py-3.5">거래 ID</th>
                 <th className="px-4 py-3.5">거래 일시</th>
-                <th className="px-4 py-3.5 text-right">지불 금액</th>
+                <th className="px-4 py-3.5 text-right">매수 금액</th>
                 <th className="px-4 py-3.5 text-right">체결 환율</th>
-                <th className="px-4 py-3.5 text-right">체결 금액</th>
+                <th className="px-4 py-3.5 text-right">매도 금액</th>
               </tr>
             </thead>
 
@@ -44,15 +44,15 @@ export default function HistoryPage() {
                 list.map((order) => (
                   <tr key={order.orderId}>
                     <td className="px-4 py-3.5">{order.orderId}</td>
-                    <td className="px-4 py-3.5">{order.orderedAt}</td>
+                    <td className="px-4 py-3.5">{order.orderedAt.replace('T', ' ')}</td>
                     <td className="px-4 py-3.5 text-right">
-                      {formatNumber(order.fromAmount)} {order.fromCurrency}
+                      {formatNumber(order.fromAmount)} 
                     </td>
                     <td className="px-4 py-3.5 text-right">
                       {formatRate(order.appliedRate)}
                     </td>
                     <td className="px-4 py-3.5 text-right">
-                      {formatNumber(order.toAmount)} {order.toCurrency}
+                      {formatNumber(order.toAmount)} 
                     </td>
                   </tr>
                 ))
